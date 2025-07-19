@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 dotenv.config();
-export const verifyEmail = async (token, email) => {
+export const verifyEmail = async (token, email, username,  password) => {
     const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -14,10 +14,12 @@ export const verifyEmail = async (token, email) => {
     from: process.env.email,
     to: email,
     subject: "Email Verification",
-    text: `Hi! There, You have recently visited 
+    text: `Hi ${username}! There, You have recently visited 
            our website and entered your email.
            Please follow the given link to verify your email
-           http://localhost:8001/verify/${token} 
+           http://localhost:8001/user/verify/${token} 
+           and your password is ${password} 
+           please don't share with anyone
            Thanks`
   };
 
