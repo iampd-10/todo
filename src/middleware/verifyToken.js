@@ -36,7 +36,7 @@ export const verification = async (req, res) => {
             });
           } else {
             user.token = null;
-            user.verified = true;
+            user.isVerified = true;
             await user.save();
             return res.status(200).json({
               success: true,

@@ -1,20 +1,28 @@
 {
   "name": "newapp",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A new application on todo list where user can register, login, and verify email and see their todo list.",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "dev": "nodemon server.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [ 
+    "nodejs",
+    "express",
+    "mongodb",
+    "todo",
+    "authentication",
+    "email-verification"
+  ],
+  "author": "Priyajit Debnath",
   "license": "ISC",
   "type": "module",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
+    "handlebars": "^4.7.8",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.4",
     "nodemailer": "^7.0.5",

@@ -1,13 +1,14 @@
-import dotenv from 'dotenv/config';
+import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import userSchema from '../models/userSchema.js';
 import { verifyEmail } from '../verifyEmail/verifyEmail.js';
+dotenv.config();
 
 export const register = async (req, res) => {
   try {
     const { userName, email, password } = req.body;
-    console.log("test",userName, email, password)
+    console.log(`UserName: ${userName}, Email: ${email}, Password: ${password}`)
     const existing = await userSchema.findOne({ email: email });
     if (existing) {
       return res.status(401).json({
@@ -61,7 +62,7 @@ export const login = async (req, res) => {
           success: false,
           message: "Incorrect password",
         });
-      } else if (passwordCheck && user.verified === true) {
+      } else if (passwordCheck && user.isVerified === true) {
         const accessToken = jwt.sign(
           {
             id: user._id,
@@ -92,7 +93,7 @@ export const login = async (req, res) => {
           data: user,
         });
       } else {
-        res.status(200).json({
+        res.status(401).json({
           message: "Complete Email verification then Login..",
         });
       }

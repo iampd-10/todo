@@ -2,17 +2,20 @@ import express from 'express';
 import dotenv from 'dotenv'
 import { Connection } from './src/config/dbConnection.js';
 import route from './src/routes/userRoute.js';
-dotenv.config()
+import { home } from './src/Home/home.js';
 const app = express();
+dotenv.config()
 
-const port= process.env.PORT;
+const port = process.env.PORT;
 
 Connection()
+
+app.get('/', home)
 
 app.use(express.json())
 
 app.use('/user', route)
 
 app.listen(port,()=>{
-    console.log(`server running at port ${port}`);
+    console.log(`✅ Server is running at http://localhost:${process.env.PORT}`);
 })
