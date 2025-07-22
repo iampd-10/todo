@@ -1,5 +1,5 @@
 {
-  "name": "newapp",
+  "name": "todo-app",
   "version": "1.0.0",
   "description": "A new application on todo list where user can register, login, and verify email and see their todo list.",
   "main": "server.js",

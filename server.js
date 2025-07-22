@@ -16,6 +16,7 @@ app.use(express.json())
 
 app.use('/user', route)
 
+
 app.listen(port,()=>{
     console.log(`✅ Server is running at http://localhost:${process.env.PORT}`);
 })

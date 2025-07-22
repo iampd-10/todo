@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reverify Email for – {{userName}}</title>
+  <style>
+    body {
+      background-color: #f4f6f8;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #333333;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 550px;
+      margin: 50px auto;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 40px 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    .logo img {
+      width: 80px;
+      height: auto;
+    }
+    h1 {
+      font-size: 24px;
+      color: #0d6efd;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #555555;
+      margin: 20px 0;
+    }
+    .button-wrapper {
+      text-align: center;
+      margin: 35px 0;
+    }
+    .verify-btn {
+      display: inline-block;
+      padding: 14px 32px;
+      background-color: #0d6efd;
+      color: #ffffff !important;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+    .verify-btn:hover {
+      background-color: #084298;
+    }
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #999999;
+      margin-top: 40px;
+      line-height: 1.6;
+    }
+    .footer a {
+      color: #0d6efd;
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <img src="https://i.pinimg.com/1200x/e9/b2/67/e9b2670484d31f700283b522c8237e56.jpg" alt="Company Logo" />
+    </div>
+    <h1>Reverify Email for {{userName}}</h1>
+    <p>
+      Hi <strong>{{userName}}</strong>,
+    </p>
+    <p>
+      Thank you for creating an account with us. To complete your registration and activate your account, please verify your email by clicking the button below.
+    </p>
+    <div class="button-wrapper">
+      <a class="verify-btn" href="http://localhost:8002/user/verify/{{token}}">
+        Verify My Email
+      </a>
+    </div>
+    <p>
+      For security reasons, this verification link will expire in 15 minutes.<br/>
+      If you did not initiate this request, you may safely ignore this email.
+    </p>
+    
+    <div class="footer">
+      &copy; 2025 Priyajit Debnath. All rights reserved.<br />
+      Need help? Contact our
+      <a href="https://www.facebook.com/iampd10official/">support team</a>.
+    </div>
+  </div>
+</body>
+</html>

@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import userSchema from "../models/userSchema.js";
 import { verifyEmail } from "../verifyEmail/verifyEmail.js";
+import { reVerifyEmail } from "../reVerifyEmail/reVerifyEmail.js";
 dotenv.config();
 
 export const register = async (req, res) => {
@@ -18,7 +19,7 @@ export const register = async (req, res) => {
         success: false,
         message: "Username must be between 3 and 8 characters",
       });
-    }
+    } 
 
     if (!email || !email.endsWith("@gmail.com")) {
       return res.status(400).json({
@@ -159,8 +160,9 @@ export const reverifyUser = async (req, res) => {
       expiresIn: "15m",
     });
     console.log(`Generated token: ${token}`);
-    verifyEmail(token, user.email, user.userName, user.password);
+    reVerifyEmail(token, user.email, user.userName);
     user.token = token;
+   
     await user.save();
 
     return res.status(200).json({
