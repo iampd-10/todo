@@ -34,6 +34,19 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: null,
+  },
+  lastLogin: {
+    type: Date,
+    default: null,
+  },
 });
 
-export default mongoose.model("user1", userSchema);
+export default mongoose.model("user1", userSchema);

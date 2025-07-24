@@ -4,39 +4,23 @@ import jwt from "jsonwebtoken";
 import userSchema from "../models/userSchema.js";
 import { verifyEmail } from "../verifyEmail/verifyEmail.js";
 import { reVerifyEmail } from "../reVerifyEmail/reVerifyEmail.js";
+import { registerSchema } from "../validator/userRegisterValidator.js";
 dotenv.config();
 
 export const register = async (req, res) => {
   try {
-   
-    let { userName, email, password } = req.body;
-    userName = userName?.trim();
-    email = email?.trim();
-    password = password?.trim();
+    const { userName, email, password } = req.body;
 
-    if (!userName || userName.length < 3 || userName.length > 8) {
+
+    const { error } = registerSchema.validate({ userName, email, password });
+    if (error) {
       return res.status(400).json({
         success: false,
-        message: "Username must be between 3 and 8 characters",
-      });
-    } 
-
-    if (!email || !email.endsWith("@gmail.com")) {
-      return res.status(400).json({
-        success: false,
-        message: "Email must be a valid Gmail address (ends with @gmail.com)",
+        message: error.details[0].message,
       });
     }
 
-    const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/;
-    if (!passwordRegex.test(password)) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Password must be at least 8 characters long, contain one special character, and one number",
-      });
-    }
-
+ 
     const existing = await userSchema.findOne({ email });
     if (existing) {
       return res.status(401).json({
@@ -45,19 +29,30 @@ export const register = async (req, res) => {
       });
     }
 
+   
     const hashedPassword = await bcrypt.hash(password, 10);
+
+   
     const user = await userSchema.create({
       userName,
       email,
       password: hashedPassword,
     });
 
+    
     const token = jwt.sign({ id: user._id }, process.env.secretKey, {
-      expiresIn: "1m",
+      expiresIn: "15m",
     });
 
+    
     verifyEmail(token, email, userName, password);
+
+    console.log(`Generated token: ${token}`);
+    console.log(`User registered: ${userName}, Email: ${email}`);
     user.token = token;
+    user.isVerified = false;
+    user.isLoggedIn = false;
+    user.updatedAt = null;
     await user.save();
 
     return res.status(201).json({
@@ -65,6 +60,7 @@ export const register = async (req, res) => {
       message: "User Registered Successfully",
       data: user,
     });
+
   } catch (err) {
     return res.status(500).json({
       success: false,
@@ -72,6 +68,7 @@ export const register = async (req, res) => {
     });
   }
 };
+
 
 
 export const login = async (req, res) => {
@@ -111,7 +108,8 @@ export const login = async (req, res) => {
             expiresIn: "30days",
           }
         );
-
+       
+        user.lastLogin = Date.now();
         user.isLoggedIn = true;
         await user.save();
         return res.status(200).json({
@@ -162,6 +160,9 @@ export const reverifyUser = async (req, res) => {
     console.log(`Generated token: ${token}`);
     reVerifyEmail(token, user.email, user.userName);
     user.token = token;
+    user.isVerified = false;
+    user.isLoggedIn = false;
+
    
     await user.save();
 
@@ -177,4 +178,67 @@ export const reverifyUser = async (req, res) => {
   }
 };
 
-export const logout = async (req, res) => {}
+export const logout = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await userSchema.findOne({ email: email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    user.isLoggedIn = false;
+    user.token = null;
+   
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "User logged out successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}
+export const updateUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { userName, email } = req.body;
+
+    const user = await userSchema.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (userName) {
+      user.userName = userName.trim();
+    }
+    if (email) {
+      user.email = email.trim().toLowerCase();
+    }
+    
+    user.updatedAt = Date.now();
+    
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "User updated successfully",
+      data: user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
