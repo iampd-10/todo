@@ -79,3 +79,31 @@ export const todoValidator = Joi.object({
     }),
 });
 
+export const updateUserValidator = Joi.object({
+  email: Joi.string()
+    .email({ tlds: { allow: false } })
+    .required()
+    .messages({
+      "string.empty": "Email is required to find the user.",
+      "string.email": "Please enter a valid email address.",
+      "any.required": "Email is required.",
+    }),
+
+  userName: Joi.string()
+    .min(3)
+    .max(30)
+    .optional()
+    .messages({
+      "string.min": "Username must be at least 3 characters.",
+      "string.max": "Username must not exceed 30 characters.",
+    }),
+
+  password: Joi.string()
+    .min(6)
+    .max(50)
+    .optional()
+    .messages({
+      "string.min": "Password must be at least 6 characters.",
+      "string.max": "Password must not exceed 50 characters.",
+    }),
+});
