@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import userSchema from "../models/userSchema.js";
 import { verifyEmail } from "../verifyEmail/verifyEmail.js";
 import { reVerifyEmail } from "../reVerifyEmail/reVerifyEmail.js";
-import { registerSchema } from "../validator/userRegisterValidator.js";
+import { loginValidator, userRegisterValidator } from "../validator/userRegisterValidator.js";
 dotenv.config();
 
 export const register = async (req, res) => {
@@ -12,7 +12,7 @@ export const register = async (req, res) => {
     const { userName, email, password } = req.body;
 
 
-    const { error } = registerSchema.validate({ userName, email, password });
+    const { error } = userRegisterValidator.validate({ userName, email, password });
     if (error) {
       return res.status(400).json({
         success: false,
@@ -53,6 +53,8 @@ export const register = async (req, res) => {
     user.isVerified = false;
     user.isLoggedIn = false;
     user.updatedAt = null;
+    // user.createdAt = Date.now();
+    user.lastLogin = null;
     await user.save();
 
     return res.status(201).json({
@@ -74,6 +76,13 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const { error } = loginValidator.validate({ email, password });
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.details[0].message,
+      });
+    }
     const user = await userSchema.findOne({ email: email });
 
     if (!user) {
@@ -191,8 +200,8 @@ export const logout = async (req, res) => {
     }
 
     user.isLoggedIn = false;
-    user.token = null;
-   
+    user.lastLogout = Date.now();
+
     await user.save();
 
     return res.status(200).json({

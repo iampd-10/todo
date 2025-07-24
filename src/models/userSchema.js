@@ -47,6 +47,10 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
+  lastLogout: {
+    type: Date,
+    default: null,
+  },
 });
 
 export default mongoose.model("user1", userSchema);
