@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
-dotenv.config();
 import jwt from "jsonwebtoken";
 import userSchema from "../models/userSchema.js";
+dotenv.config();
 
 //mail verification
 export const verification = async (req, res) => {
