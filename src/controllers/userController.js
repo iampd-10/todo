@@ -7,13 +7,15 @@ import { reVerifyEmail } from "../reVerifyEmail/reVerifyEmail.js";
 import {
   loginValidator,
   userRegisterValidator,
-  updateUserValidator
+  updateUserValidator,
 } from "../validator/userRegisterValidator.js";
+import sessionSchema from "../models/sessionSchema.js";
 dotenv.config();
 
 export const register = async (req, res) => {
   try {
     const { userName, email, password } = req.body;
+    const profilePhoto = `http://localhost:${process.env.PORT}/uploads/${req.file.filename}`;
     console.log("Registering user:", userName, email);
 
     if (!userName || !email || !password) {
@@ -49,6 +51,7 @@ export const register = async (req, res) => {
       userName,
       email,
       password: hashedPassword,
+      image: profilePhoto,
     });
 
     const token = jwt.sign({ id: user._id }, process.env.secretKey, {
@@ -65,6 +68,7 @@ export const register = async (req, res) => {
     user.updatedAt = null;
     user.createdAt = new Date();
     user.lastLogin = null;
+    user.image = profilePhoto;
     await user.save();
 
     return res.status(201).json({
@@ -72,7 +76,6 @@ export const register = async (req, res) => {
       message: "User Registered Successfully",
       data: user,
     });
-
   } catch (err) {
     return res.status(500).json({
       success: false,
@@ -80,8 +83,6 @@ export const register = async (req, res) => {
     });
   }
 };
-
-
 
 export const login = async (req, res) => {
   try {
@@ -120,7 +121,12 @@ export const login = async (req, res) => {
           success: false,
           message: "Complete Email verification then Login..",
         });
-      } else if (passwordCheck && user.isVerified === true) {
+      } else if (passwordCheck && user.isVerified === true)
+           
+        {
+          await sessionSchema.findOneAndDelete({ userId: user._id });
+          await sessionSchema.create({ userId: user._id });
+      
         const accessToken = jwt.sign(
           {
             id: user._id,
@@ -221,6 +227,7 @@ export const logout = async (req, res) => {
       });
     }
     const user = await userSchema.findOne({ email: email });
+     await sessionSchema.findOneAndDelete({ userId: user._id });
 
     if (!user) {
       return res.status(404).json({
@@ -258,7 +265,11 @@ export const updateUser = async (req, res) => {
         message: "Email is required to find the user.",
       });
     }
-    const { error } = updateUserValidator.validate({ email, userName, password });
+    const { error } = updateUserValidator.validate({
+      email,
+      userName,
+      password,
+    });
     if (error) {
       return res.status(400).json({
         success: false,
@@ -266,7 +277,9 @@ export const updateUser = async (req, res) => {
       });
     }
 
-    const user = await userSchema.findOne({ email: email.trim().toLowerCase() });
+    const user = await userSchema.findOne({
+      email: email.trim().toLowerCase(),
+    });
 
     if (!user) {
       return res.status(404).json({
@@ -286,7 +299,7 @@ export const updateUser = async (req, res) => {
         message: "User is not logged in. Please log in to update your details.",
       });
     }
-  
+
     if (userName) {
       user.userName = userName.trim();
     }

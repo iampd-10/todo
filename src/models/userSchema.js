@@ -51,6 +51,10 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
+  image: {
+    type: String,
+    default: "",
+  },
 });
 
 export default mongoose.model("user1", userSchema);
