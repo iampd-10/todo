@@ -266,8 +266,6 @@ export const updateUser = async (req, res) => {
       });
     }
 
-
-
     const user = await userSchema.findOne({ email: email.trim().toLowerCase() });
 
     if (!user) {
@@ -293,7 +291,6 @@ export const updateUser = async (req, res) => {
       user.userName = userName.trim();
     }
 
-  
     if (password) {
       const isSame = await bcrypt.compare(password, user.password);
       if (isSame) {

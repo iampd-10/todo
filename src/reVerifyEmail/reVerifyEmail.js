@@ -60,7 +60,7 @@ export const reVerifyEmail = async (token, email, username, ) => {
            You have recently visited 
            our website and entered your email.
            Please follow the given link to verify your email
-           http://localhost:8001/user/verify/${token} 
+           http://localhost:5173/user/verify/${token} 
            
            Please make sure to verify
            This is for mock practice not a real verification 
