@@ -4,11 +4,6 @@ import jwt from "jsonwebtoken";
 import userSchema from "../models/userSchema.js";
 import { verifyEmail } from "../verifyEmail/verifyEmail.js";
 import { reVerifyEmail } from "../reVerifyEmail/reVerifyEmail.js";
-import {
-  loginValidator,
-  userRegisterValidator,
-  updateUserValidator,
-} from "../validator/userRegisterValidator.js";
 import sessionSchema from "../models/sessionSchema.js";
 dotenv.config();
 
@@ -25,17 +20,6 @@ export const register = async (req, res) => {
       });
     }
 
-    const { error } = userRegisterValidator.validate({
-      userName,
-      email,
-      password,
-    });
-    if (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.details[0].message,
-      });
-    }
 
     const existing = await userSchema.findOne({ email });
     if (existing) {
@@ -87,13 +71,7 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const { error } = await loginValidator.validateAsync({ email, password });
-    if (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.details[0].message,
-      });
-    }
+   
     const user = await userSchema.findOne({ email: email });
 
     if (!user) {
@@ -228,6 +206,7 @@ export const logout = async (req, res) => {
     }
     const user = await userSchema.findOne({ email: email });
      await sessionSchema.findOneAndDelete({ userId: user._id });
+     
 
     if (!user) {
       return res.status(404).json({
@@ -263,17 +242,6 @@ export const updateUser = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Email is required to find the user.",
-      });
-    }
-    const { error } = updateUserValidator.validate({
-      email,
-      userName,
-      password,
-    });
-    if (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.details[0].message,
       });
     }
 

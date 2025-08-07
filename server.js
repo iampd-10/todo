@@ -7,22 +7,19 @@ import { home } from './src/Home/home.js';
 import todoRoute from './src/routes/todoRoute.js';
 const app = express();
 dotenv.config()
+
 app.use(cors({
     origin: '*'
 }))
-
 
 const port = process.env.PORT;
 
 Connection()
 
-app.get('/', home)
-
+app.get('/', home);
 app.use(express.json())
 app.use('/uploads', express.static('uploads'));
-
 app.use('/user', route)
-
 app.use('/todo', todoRoute)
 
 app.listen(port,()=>{

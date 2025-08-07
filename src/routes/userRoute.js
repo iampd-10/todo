@@ -6,6 +6,7 @@ import {
   reverifyUser,
   updateUser
 } from '../controllers/userController.js';
+import { validateUser, userSchema } from '../validator/userRegisterValidator.js';
 import { upload } from '../controllers/fileController.js';
 import { verification } from '../middleware/verifyToken.js';
 
@@ -13,7 +14,12 @@ const router = express.Router();
 
 
 
-router.post('/register', upload.single('profilePhoto'), register);
+router.post(
+  '/register',
+  upload.single('profilePhoto'),
+  validateUser(userSchema),
+  register
+);
 router.get('/verify', verification);
 router.post('/login', login);
 router.post('/reverify', reverifyUser); 

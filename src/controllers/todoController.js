@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import todoSchema from "../models/todoSchema.js";
-import { todoValidator } from "../validator/userRegisterValidator.js";
+
 dotenv.config();
 
 
@@ -14,14 +14,7 @@ export const addTodo = async (req, res) => {
         message: "Title is required",
       });
     }
-    const { error } = todoValidator.validate({ title, userId: req.userId, description });
-    if (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.details[0].message,
-      });
-    }
-
+   
     const existing = await todoSchema.findOne({ title: title, userId: req.userId, });
     if (existing) {
       return res.status(400).json({
